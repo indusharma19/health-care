@@ -1,5 +1,5 @@
 - name: Deploy Application to Kubernetes
-  hosts: k8s_master
+  hosts: all
   become: yes
   tasks:
     - name: Ensure python3-pip is installed
@@ -20,7 +20,7 @@
         state: present
         update_cache: yes
 
-    - name: Deploy Application on Kubernetes Master
+    - name: Deploy Application on Kubernetes Cluster
       k8s:
         state: present
         definition: |
