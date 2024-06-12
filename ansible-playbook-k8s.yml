@@ -1,14 +1,14 @@
 - name: Deploy Application to Kubernetes
-  hosts: k8s_master
+  hosts: k8s-master
   become: yes
   tasks:
-    - name: Ensure Kubernetes is installed
+    - name: Ensure kubectl is installed
       apt:
-        name: kubelet,kubeadm,kubectl
+        name: kubectl
         state: present
         update_cache: yes
 
-    - name: Apply Kubernetes configuration
+    - name: Create Kubernetes deployment
       k8s:
         state: present
         definition: |
@@ -45,7 +45,6 @@
               app: health-care
             ports:
               - protocol: TCP
-                port: 8086
+                port: 8085
                 targetPort: 8081
             type: NodePort
-
