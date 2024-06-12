@@ -42,8 +42,6 @@ pipeline {
             }
         }
 
-
-
         stage('Add Host Key for Kubernetes Master') {
             steps {
                 script {
