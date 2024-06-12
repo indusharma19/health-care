@@ -2,11 +2,22 @@
   hosts: k8s-master
   become: yes
   tasks:
+    - name: Ensure pip is installed
+      apt:
+        name: python3-pip
+        state: present
+        update_cache: yes
+
+    - name: Ensure kubernetes Python module is installed
+      pip:
+        name: kubernetes
+        state: present
+        executable: pip3
+
     - name: Ensure kubectl is installed
       apt:
         name: kubectl
         state: present
-        update_cache: yes
 
     - name: Create Kubernetes deployment
       k8s:
