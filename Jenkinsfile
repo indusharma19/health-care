@@ -30,7 +30,7 @@ pipeline {
         stage('Tag and Push Image') {
             steps {
                 script {
-                    sh 'docker tag finance-me-bank indu1919/finance-me-bank:v1'
+                    sh 'docker tag health-care indu1919/health-care:v1'
                     sh 'docker push indu1919/health-care:v1'
                 }
             }
@@ -48,7 +48,7 @@ pipeline {
                     sh '''
                         mkdir -p ~/.ssh
                         chmod 700 ~/.ssh
-                        ssh-keyscan -H <K8S_MASTER_IP> >> ~/.ssh/known_hosts
+                        ssh-keyscan -H 10.0.1.64 >> ~/.ssh/known_hosts
                         chmod 644 ~/.ssh/known_hosts
                     '''
                 }
