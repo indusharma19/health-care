@@ -1,20 +1,12 @@
-- name: Ensure python3-pip is installed
+- name: Ensure required packages are installed
   apt:
-    name: python3-pip
+    name: "{{ item }}"
     state: present
     update_cache: yes
-
-- name: Install kubernetes Python module
-  pip:
-    name: kubernetes
-    executable: pip3  # Specify pip3 executable if needed
-    state: present
-
-- name: Ensure kubectl is installed
-  apt:
-    name: kubectl
-    state: present
-    update_cache: yes
+  loop:
+    - python3-pip
+    - python3-kubernetes
+    - kubectl
 
 - name: Deploy Application on Kubernetes Cluster
   k8s:
@@ -35,10 +27,10 @@
               app: health-care
           spec:
             containers:
-            - name: health-care
-              image: indu1919/health-care:v1
-              ports:
-              - containerPort: 8081
+              - name: health-care
+                image: indu1919/health-care:v1
+                ports:
+                  - containerPort: 8081
 
 - name: Expose the Deployment
   k8s:
