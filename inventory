@@ -1,5 +1,5 @@
 [k8s-master]
-<K8S_MASTER_IP> ansible_user=ubuntu
+10.0.1.64 ansible_user=ubuntu
 
 [k8s-worker]
-<K8S_WORKER_IP> ansible_user=ubuntu
+10.0.1.21 ansible_user=ubuntu
