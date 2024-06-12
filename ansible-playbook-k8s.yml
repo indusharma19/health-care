@@ -9,11 +9,10 @@
         update_cache: yes
 
     - name: Install pipx
-      apt:
-        name: pipx
-        state: present
-        update_cache: yes
-
+      command: pip3 install --user pipx
+      environment:
+        PATH: "{{ ansible_env.PATH }}"
+        
     - name: Install kubernetes Python module using pipx
       pipx:
         name: kubernetes
