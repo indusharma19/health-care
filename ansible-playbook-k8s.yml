@@ -1,4 +1,14 @@
 ---
+- name: Ensure required Python libraries are installed
+  hosts: all
+  become: yes
+  tasks:
+    - name: Install Python Kubernetes library
+      pip:
+        name: kubernetes
+        state: present
+        executable: pip3  # Specify pip3 executable if needed
+
 - name: Deploy Health-Care Application on Kubernetes
   hosts: k8s_cluster
   become: yes
