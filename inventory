@@ -1,5 +1,5 @@
-[k8s-master]
+[k8s_master]
 10.0.1.64 ansible_user=ubuntu
 
-[k8s-worker]
+[k8s_worker]
 10.0.1.21 ansible_user=ubuntu
