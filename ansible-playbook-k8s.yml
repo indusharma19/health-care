@@ -1,56 +1,52 @@
----
 - name: Ensure required packages are installed
-  hosts: all
-  become: true
-  tasks:
-    - name: Ensure kubernetes Python module is installed
-      pip:
-        name: kubernetes
-        state: present
+  apt:
+    name: python3-pip python3-kubernetes
+    state: present
+    update_cache: yes
 
-    - name: Ensure kubectl is installed
-      apt:
-        name: kubectl
-        state: present
-        update_cache: yes
+- name: Ensure kubectl is installed
+  apt:
+    name: kubectl
+    state: present
+    update_cache: yes
 
-    - name: Deploy Application on Kubernetes Cluster
-      k8s:
-        state: present
-        definition: |
-          apiVersion: apps/v1
-          kind: Deployment
+- name: Deploy Application on Kubernetes Cluster
+  k8s:
+    state: present
+    definition: |
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: health-care
+      spec:
+        replicas: 2
+        selector:
+          matchLabels:
+            app: health-care
+        template:
           metadata:
-            name: health-care
-          spec:
-            replicas: 2
-            selector:
-              matchLabels:
-                app: health-care
-            template:
-              metadata:
-                labels:
-                  app: health-care
-              spec:
-                containers:
-                  - name: health-care
-                    image: indu1919/health-care:v1
-                    ports:
-                      - containerPort: 8081
-
-    - name: Expose the Deployment
-      k8s:
-        state: present
-        definition: |
-          apiVersion: v1
-          kind: Service
-          metadata:
-            name: health-care-service
-          spec:
-            selector:
+            labels:
               app: health-care
-            ports:
-              - protocol: TCP
-                port: 8085
-                targetPort: 8081
-            type: NodePort
+          spec:
+            containers:
+            - name: health-care
+              image: indu1919/health-care:v1
+              ports:
+              - containerPort: 8081
+
+- name: Expose the Deployment
+  k8s:
+    state: present
+    definition: |
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: health-care-service
+      spec:
+        selector:
+          app: health-care
+        ports:
+          - protocol: TCP
+            port: 8085
+            targetPort: 8081
+        type: NodePort
