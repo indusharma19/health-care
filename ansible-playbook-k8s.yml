@@ -5,8 +5,13 @@
     update_cache: yes
   loop:
     - python3-pip
-    - python3-kubernetes
     - kubectl
+
+- name: Install kubernetes Python module
+  pip:
+    name: kubernetes
+    executable: pip3
+    state: present
 
 - name: Deploy Application on Kubernetes Cluster
   k8s:
