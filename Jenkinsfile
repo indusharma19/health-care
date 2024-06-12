@@ -42,18 +42,7 @@ pipeline {
             }
         }
 
-        stage('Create/Update Inventory File') {
-            steps {
-                script {
-                    sh '''
-                        cat <<EOF > inventory
-                        [k8s_master]
-                        10.0.1.64 ansible_user=ubuntu
-                        EOF
-                    '''.stripIndent()
-                }
-            }
-        }
+
 
         stage('Add Host Key for Kubernetes Master') {
             steps {
