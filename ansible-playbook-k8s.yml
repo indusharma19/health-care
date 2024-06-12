@@ -8,11 +8,15 @@
         state: present
         update_cache: yes
 
-    - name: Ensure kubernetes Python module is installed
-      pip:
-        name: kubernetes
+    - name: Install pipx
+      apt:
+        name: pipx
         state: present
-        executable: pip3
+        update_cache: yes
+
+    - name: Install kubernetes Python module using pipx
+      pipx:
+        name: kubernetes
 
     - name: Ensure kubectl is installed
       apt:
