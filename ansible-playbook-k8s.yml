@@ -2,9 +2,9 @@
   hosts: k8s_master
   become: yes
   tasks:
-    - name: Ensure kubectl is installed
+    - name: Ensure python3-pip is installed
       apt:
-        name: kubectl
+        name: python3-pip
         state: present
         update_cache: yes
 
@@ -13,6 +13,12 @@
         name: kubernetes
         state: present
         executable: pip3
+
+    - name: Ensure kubectl is installed
+      apt:
+        name: kubectl
+        state: present
+        update_cache: yes
 
     - name: Deploy Application on Kubernetes Master
       k8s:
@@ -54,19 +60,3 @@
                 port: 8085
                 targetPort: 8081
             type: NodePort
-
-- name: Deploy Application to Kubernetes Workers
-  hosts: k8s_worker
-  become: yes
-  tasks:
-    - name: Ensure kubectl is installed
-      apt:
-        name: kubectl
-        state: present
-        update_cache: yes
-
-    - name: Ensure kubernetes Python module is installed
-      pip:
-        name: kubernetes
-        state: present
-        executable: pip3
