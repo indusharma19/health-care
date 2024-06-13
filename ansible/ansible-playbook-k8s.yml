@@ -11,9 +11,9 @@
     - name: Deploy Health-Care Deployment
       command: kubectl apply -f deployment.yaml
       args:
-        chdir: /path/to/cloned/repo/ansible
+        chdir: health-care/ansible
 
     - name: Expose Health-Care Service
       command: kubectl apply -f service.yaml
       args:
-        chdir: /path/to/cloned/repo/ansible
+        chdir: health-care/ansible
