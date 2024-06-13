@@ -1,0 +1,19 @@
+- name: Deploy Health-Care Application on Kubernetes
+  hosts: all
+  become: yes
+  tasks:
+    - name: Ensure kubectl is installed
+      apt:
+        name: kubectl
+        state: present
+        update_cache: yes
+
+    - name: Deploy Health-Care Deployment
+      command: kubectl apply -f deployment.yaml
+      args:
+        chdir: /path/to/cloned/repo/ansible
+
+    - name: Expose Health-Care Service
+      command: kubectl apply -f service.yaml
+      args:
+        chdir: /path/to/cloned/repo/ansible
