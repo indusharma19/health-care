@@ -61,7 +61,7 @@ pipeline {
                     script {
                         sh '''
                             export ANSIBLE_HOST_KEY_CHECKING=False
-                            ansible-playbook -i inventory ansible-playbook-k8s.yml --key-file $KEYFILE
+                            ansible-playbook -i anible/inventory ansible/ansible-playbook-k8s.yml --key-file $KEYFILE
                         '''
                     }
                 }
