@@ -8,18 +8,12 @@
         state: present
         update_cache: yes
 
-    - name: Clone GitHub repository
-      ansible.builtin.git:
-        repo: https://github.com/indusharma19/health-care.git
-        dest: /tmp/health-care  # Destination directory on the target machine
-
     - name: Deploy Health-Care Deployment
-      command: kubectl apply -f /tmp/health-care/ansible/deployment.yaml
+      command: kubectl apply -f deployment.yaml
       args:
-        chdir: /tmp/health-care/ansible
+        chdir: /tmp/health-care/ansible  # Adjust the path if necessary
 
     - name: Expose Health-Care Service
-      command: kubectl apply -f /tmp/health-care/ansible/service.yaml
+      command: kubectl apply -f service.yaml
       args:
-        chdir: /tmp/health-care/ansible
-
+        chdir: /tmp/health-care/ansible  # Adjust the path if necessary
