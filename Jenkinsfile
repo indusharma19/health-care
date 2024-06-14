@@ -2,8 +2,11 @@ pipeline {
     agent any
 
     environment {
-        KUBE_CONFIG = credentials('kubeconfig-secret')  // Jenkins secret text credential for kubeconfig
-        ANSIBLE_CRED = credentials('ansible')           // Jenkins credentials ID for Ansible SSH key
+        KUBE_CONFIG_DIR = '/var/lib/jenkins/.kube'
+        KUBE_CONFIG_FILE = "${KUBE_CONFIG_DIR}/config"
+        KUBE_MASTER_USER = 'ubuntu'
+        KUBE_MASTER_IP = '10.0.1.64'
+        KUBE_MASTER_CONFIG_PATH = "/root/.kube/config"
     }
 
     stages {
@@ -53,23 +56,34 @@ pipeline {
                     sh '''
                         mkdir -p ~/.ssh
                         chmod 700 ~/.ssh
-                        ssh-keyscan -H 10.0.1.64 >> ~/.ssh/known_hosts
+                        ssh-keyscan -H ${KUBE_MASTER_IP} >> ~/.ssh/known_hosts
                         chmod 644 ~/.ssh/known_hosts
                     '''
                 }
             }
         }
 
+        stage('Copy Kubernetes Config') {
+            steps {
+                script {
+                    // Create the .kube directory if it doesn't exist
+                    sh "mkdir -p ${KUBE_CONFIG_DIR}"
+                    // Copy the Kubernetes config file from Kubernetes master to Jenkins server
+                    sh "scp ${KUBE_MASTER_USER}@${KUBE_MASTER_IP}:${KUBE_MASTER_CONFIG_PATH} ${KUBE_CONFIG_FILE}"
+                    // Check if the file was copied successfully
+                    sh "ls -l ${KUBE_CONFIG_FILE}"
+                }
+            }
+        }
+
         stage('Deploy with Ansible to Kubernetes') {
             steps {
-                withCredentials([sshUserPrivateKey(credentialsId: 'ansible', keyFileVariable: 'KEYFILE'), string(credentialsId: 'kubeconfig-secret', variable: 'KUBE_CONFIG')]) {
+                withCredentials([sshUserPrivateKey(credentialsId: 'ansible', keyFileVariable: 'KEYFILE')]) {
                     script {
-                        sh '''
-                            echo "$KUBE_CONFIG" > ${WORKSPACE}/kubeconfig
-                            export KUBECONFIG=${WORKSPACE}/kubeconfig
-                            export ANSIBLE_HOST_KEY_CHECKING=False
-                            ansible-playbook -i ansible/inventory ansible/ansible-playbook-k8s.yml --key-file $KEYFILE -e kubeconfig_path=${WORKSPACE}/kubeconfig
-                        '''
+                        // Set KUBECONFIG environment variable for Ansible
+                        withEnv(['KUBECONFIG=${KUBE_CONFIG_FILE}', 'ANSIBLE_HOST_KEY_CHECKING=False']) {
+                            sh 'ansible-playbook -i ansible/inventory ansible/ansible-playbook-k8s.yml --key-file $KEYFILE'
+                        }
                     }
                 }
             }
