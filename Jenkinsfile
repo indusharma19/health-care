@@ -1,5 +1,11 @@
 pipeline {
     agent any
+
+    environment {
+        KUBE_CONFIG = credentials('kubeconfig-secret')  // Jenkins secret text credential for kubeconfig
+        ANSIBLE_CRED = credentials('ansible')           // Jenkins credentials ID for Ansible SSH key
+    }
+
     stages {
         stage('Build Project') {
             steps {
@@ -13,7 +19,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    sh 'docker build -t health-care .'
+                    sh 'docker build -t indu1919/health-care:v1 .'
                     sh 'docker images'
                 }
             }
@@ -30,7 +36,6 @@ pipeline {
         stage('Tag and Push Image') {
             steps {
                 script {
-                    sh 'docker tag health-care indu1919/health-care:v1'
                     sh 'docker push indu1919/health-care:v1'
                 }
             }
@@ -60,6 +65,8 @@ pipeline {
                 withCredentials([sshUserPrivateKey(credentialsId: 'ansible', keyFileVariable: 'KEYFILE')]) {
                     script {
                         sh '''
+                            echo "$KUBE_CONFIG" > ${WORKSPACE}/kubeconfig
+                            export KUBECONFIG=${WORKSPACE}/kubeconfig
                             export ANSIBLE_HOST_KEY_CHECKING=False
                             ansible-playbook -i ansible/inventory ansible/ansible-playbook-k8s.yml --key-file $KEYFILE
                         '''
