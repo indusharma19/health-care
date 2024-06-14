@@ -7,17 +7,21 @@
       register: kubectl_check
       ignore_errors: yes
 
+    - name: Create directory for health-care files
+      file:
+        path: /tmp/health-care/ansible
+        state: directory
+        mode: '0755'
+
     - name: Fetch deployment.yaml from GitHub
-      fetch:
-        src: https://raw.githubusercontent.com/indusharma19/health-care/master/ansible/deployment.yaml
+      get_url:
+        url: https://raw.githubusercontent.com/indusharma19/health-care/master/ansible/deployment.yaml
         dest: /tmp/health-care/ansible/deployment.yaml
-        flat: yes
 
     - name: Fetch service.yaml from GitHub
-      fetch:
-        src: https://raw.githubusercontent.com/indusharma19/health-care/master/ansible/service.yaml
+      get_url:
+        url: https://raw.githubusercontent.com/indusharma19/health-care/master/ansible/service.yaml
         dest: /tmp/health-care/ansible/service.yaml
-        flat: yes
 
     - name: Deploy Health-Care Deployment
       command: kubectl apply -f deployment.yaml
