@@ -7,13 +7,24 @@
       register: kubectl_check
       ignore_errors: yes
 
-    - name: Clone GitHub repository
-      git:
-        repo: https://github.com/indusharma19/health-care.git
-        dest: /tmp/health-care
-        version: master
+    - name: Fetch deployment.yaml from GitHub
+      fetch:
+        src: https://raw.githubusercontent.com/indusharma19/health-care/master/ansible/deployment.yaml
+        dest: /tmp/health-care/ansible/deployment.yaml
+        flat: yes
 
-    - name: Deploy Health-Care Application
-      command: kubectl apply -f deployment.yaml -f service.yaml
+    - name: Fetch service.yaml from GitHub
+      fetch:
+        src: https://raw.githubusercontent.com/indusharma19/health-care/master/ansible/service.yaml
+        dest: /tmp/health-care/ansible/service.yaml
+        flat: yes
+
+    - name: Deploy Health-Care Deployment
+      command: kubectl apply -f deployment.yaml
       args:
-        chdir: /tmp/health-care/ansible  # Adjust the path if necessary
+        chdir: /tmp/health-care/ansible
+
+    - name: Expose Health-Care Service
+      command: kubectl apply -f service.yaml
+      args:
+        chdir: /tmp/health-care/ansible
