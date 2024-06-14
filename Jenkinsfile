@@ -70,7 +70,7 @@ pipeline {
                     // Create the .kube directory if it doesn't exist
                     sh "mkdir -p ${KUBE_CONFIG_DIR}"
                     // Copy the Kubernetes config file from Kubernetes master to Jenkins server
-                    sh "scp -i ${SSH_KEY_PATH} ${KUBE_MASTER_USER}@${KUBE_MASTER_IP}:${KUBE_MASTER_CONFIG_PATH} ${KUBE_CONFIG_FILE}"
+                    sh "scp -i /home/ubuntu/linux.pem ubuntu@${KUBE_MASTER_IP}:${KUBE_MASTER_CONFIG_PATH} ${KUBE_CONFIG_FILE}"
                     // Check if the file was copied successfully
                     sh "ls -l ${KUBE_CONFIG_FILE}"
                 }
