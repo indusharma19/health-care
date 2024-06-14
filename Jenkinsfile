@@ -71,8 +71,10 @@ pipeline {
                     sh "chmod 400 ${PEM_FILE}"
                     // Create the .kube directory if it doesn't exist
                     sh "mkdir -p ${KUBE_CONFIG_DIR}"
-                    // Use rsync to copy the Kubernetes config file from Kubernetes master to Jenkins server
-                    sh "rsync -avz -e 'ssh -i ${PEM_FILE} -o StrictHostKeyChecking=no' ${KUBE_MASTER_USER}@${KUBE_MASTER_IP}:${KUBE_MASTER_CONFIG_PATH} ${KUBE_CONFIG_FILE}"
+                    // Copy the Kubernetes config file from Kubernetes master to Jenkins server using tar and ssh
+                    sh '''
+                        ssh -i ${PEM_FILE} -o StrictHostKeyChecking=no ${KUBE_MASTER_USER}@${KUBE_MASTER_IP} "tar -czf - -C /root/.kube config" | tar -xzf - -C ${KUBE_CONFIG_DIR}
+                    '''
                     // Check if the file was copied successfully
                     sh "ls -l ${KUBE_CONFIG_FILE}"
                 }
