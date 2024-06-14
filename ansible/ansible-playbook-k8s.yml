@@ -7,12 +7,13 @@
       register: kubectl_check
       ignore_errors: yes
 
-    - name: Deploy Health-Care Deployment
-      command: kubectl apply -f deployment.yaml
-      args:
-        chdir: /tmp/health-care/ansible  # Adjust the path if necessary
+    - name: Clone GitHub repository
+      git:
+        repo: https://github.com/indusharma19/health-care.git
+        dest: /tmp/health-care
+        version: master
 
-    - name: Expose Health-Care Service
-      command: kubectl apply -f service.yaml
+    - name: Deploy Health-Care Application
+      command: kubectl apply -f deployment.yaml -f service.yaml
       args:
         chdir: /tmp/health-care/ansible  # Adjust the path if necessary
