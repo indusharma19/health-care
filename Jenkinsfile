@@ -62,13 +62,13 @@ pipeline {
 
         stage('Deploy with Ansible to Kubernetes') {
             steps {
-                withCredentials([sshUserPrivateKey(credentialsId: 'ansible', keyFileVariable: 'KEYFILE')]) {
+                withCredentials([sshUserPrivateKey(credentialsId: 'ansible', keyFileVariable: 'KEYFILE'), string(credentialsId: 'kubeconfig-secret', variable: 'KUBE_CONFIG')]) {
                     script {
                         sh '''
                             echo "$KUBE_CONFIG" > ${WORKSPACE}/kubeconfig
                             export KUBECONFIG=${WORKSPACE}/kubeconfig
                             export ANSIBLE_HOST_KEY_CHECKING=False
-                            ansible-playbook -i ansible/inventory ansible/ansible-playbook-k8s.yml --key-file $KEYFILE
+                            ansible-playbook -i ansible/inventory ansible/ansible-playbook-k8s.yml --key-file $KEYFILE -e kubeconfig_path=${WORKSPACE}/kubeconfig
                         '''
                     }
                 }
