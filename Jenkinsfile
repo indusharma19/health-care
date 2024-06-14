@@ -7,6 +7,7 @@ pipeline {
         KUBE_MASTER_USER = 'ubuntu'
         KUBE_MASTER_IP = '10.0.1.64'
         KUBE_MASTER_CONFIG_PATH = "/root/.kube/config"
+        SSH_KEY_PATH = '/home/ubuntu/linux.pem'  // Path to your SSH private key on Jenkins server
     }
 
     stages {
@@ -69,7 +70,7 @@ pipeline {
                     // Create the .kube directory if it doesn't exist
                     sh "mkdir -p ${KUBE_CONFIG_DIR}"
                     // Copy the Kubernetes config file from Kubernetes master to Jenkins server
-                    sh "scp ${KUBE_MASTER_USER}@${KUBE_MASTER_IP}:${KUBE_MASTER_CONFIG_PATH} ${KUBE_CONFIG_FILE}"
+                    sh "scp -i ${SSH_KEY_PATH} ${KUBE_MASTER_USER}@${KUBE_MASTER_IP}:${KUBE_MASTER_CONFIG_PATH} ${KUBE_CONFIG_FILE}"
                     // Check if the file was copied successfully
                     sh "ls -l ${KUBE_CONFIG_FILE}"
                 }
