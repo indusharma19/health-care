@@ -4,10 +4,10 @@ pipeline {
     environment {
         KUBE_CONFIG_DIR = '/var/lib/jenkins/.kube'
         KUBE_CONFIG_FILE = "${KUBE_CONFIG_DIR}/config"
-        KUBE_MASTER_USER = 'ubuntu'
+        KUBE_MASTER_USER = 'root'  // Use root user
         KUBE_MASTER_IP = '10.0.1.64'
         KUBE_MASTER_CONFIG_PATH = "/root/.kube/config"
-        SSH_KEY_PATH = '/home/ubuntu/linux.pem'  // Path to your SSH private key on Jenkins server
+        PEM_FILE = '/home/ubuntu/linux.pem'  // Path to the PEM file on Jenkins server
     }
 
     stages {
@@ -70,7 +70,7 @@ pipeline {
                     // Create the .kube directory if it doesn't exist
                     sh "mkdir -p ${KUBE_CONFIG_DIR}"
                     // Copy the Kubernetes config file from Kubernetes master to Jenkins server
-                    sh "scp -i /home/ubuntu/linux.pem ubuntu@${KUBE_MASTER_IP}:${KUBE_MASTER_CONFIG_PATH} ${KUBE_CONFIG_FILE}"
+                    sh "scp -i ${PEM_FILE} ${KUBE_MASTER_USER}@${KUBE_MASTER_IP}:${KUBE_MASTER_CONFIG_PATH} ${KUBE_CONFIG_FILE}"
                     // Check if the file was copied successfully
                     sh "ls -l ${KUBE_CONFIG_FILE}"
                 }
@@ -82,7 +82,7 @@ pipeline {
                 withCredentials([sshUserPrivateKey(credentialsId: 'ansible', keyFileVariable: 'KEYFILE')]) {
                     script {
                         // Set KUBECONFIG environment variable for Ansible
-                        withEnv(['KUBECONFIG=${KUBE_CONFIG_FILE}', 'ANSIBLE_HOST_KEY_CHECKING=False']) {
+                        withEnv(["KUBECONFIG=${KUBE_CONFIG_FILE}", 'ANSIBLE_HOST_KEY_CHECKING=False']) {
                             sh 'ansible-playbook -i ansible/inventory ansible/ansible-playbook-k8s.yml --key-file $KEYFILE'
                         }
                     }
