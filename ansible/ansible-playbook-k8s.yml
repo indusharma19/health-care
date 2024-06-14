@@ -24,11 +24,11 @@
         dest: /tmp/health-care/ansible/service.yaml
 
     - name: Deploy Health-Care Deployment
-      command: kubectl apply -f deployment.yaml
-      args:
-        chdir: /tmp/health-care/ansible
+      command: kubectl apply --validate=false -f /tmp/health-care/ansible/deployment.yaml
+      environment:
+        KUBECONFIG: "{{ kubeconfig_path }}"  # Ensure KUBECONFIG points to the correct kubeconfig file
 
     - name: Expose Health-Care Service
-      command: kubectl apply -f service.yaml
-      args:
-        chdir: /tmp/health-care/ansible
+      command: kubectl apply --validate=false -f /tmp/health-care/ansible/service.yaml
+      environment:
+        KUBECONFIG: "{{ kubeconfig_path }}"  # Ensure KUBECONFIG points to the correct kubeconfig file
