@@ -13,7 +13,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    sh 'docker build -t health-care.git .'
+                    sh 'docker build -t health-care:latest .
                     sh 'docker images'
                 }
             }
@@ -30,7 +30,7 @@ pipeline {
         stage('Tag and Push Image') {
             steps {
                 script {
-                    sh 'docker tag health-care indu1919/health-care:v2'
+                    sh 'docker tag health-care:latest indu1919/health-care:v2'
                     sh 'docker push indu1919/health-care:v2'
                 }
             }
