@@ -13,7 +13,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    sh 'docker build -t health-care .
+                    sh 'docker build -t health-care:latest .
                     sh 'docker images'
                 }
             }
