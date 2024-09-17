@@ -24,16 +24,16 @@
 
     - name: Pull Docker Image
       docker_image:
-        name: indu1919/health-care:v2
+        name: indu1919/health-care:v3
         source: pull
       become: true
 
     - name: Deploy Docker Container
       docker_container:
         name: health-care
-        image: indu1919/health-care:v2
+        image: indu1919/health-care:v3
         ports:
-          - "8086:8081"
+          - "8086:8085"
         state: started
         restart_policy: always
       become: true
